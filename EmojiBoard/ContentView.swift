@@ -2,18 +2,27 @@
 //  ContentView.swift
 //  EmojiBoard
 //
+
 //  Created by Oleh Kopyl on 20.12.2024.
 //
+
+let emojiList = ["❤️", "🔥"]
 
 import SwiftUI
 
 struct ContentView: View {
+    @State var selection: String = emojiList[0]
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Text(selection).font(.system(size: 100))
+            
+            Picker("Select emoji", selection: $selection) {
+                ForEach(emojiList, id: \.self) {
+                    emoji in Text(emoji)
+                }
+            }
+            .pickerStyle(.wheel)
         }
         .padding()
     }
