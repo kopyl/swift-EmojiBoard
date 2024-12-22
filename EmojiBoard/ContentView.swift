@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import EmojiPalette
 
 let spacing: CGFloat = 5
 let buttonSize: CGFloat = 50
@@ -79,11 +80,26 @@ extension View {
     }
 }
 
+extension Binding {
+    @MainActor
+    func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
+        Binding(
+            get: { self.wrappedValue },
+            set: { newValue in
+                self.wrappedValue = newValue
+                handler(newValue)
+            }
+        )
+    }
+}
+
 @available(iOS 17.0, *)
 struct ContentView: View {
     
+    @State var showPopover: Bool = false
+    @State var emoji: String = ""
+    
     @State private var isAlertPresented = false
-    @State private var userInput = ""
     
     @Environment(\.modelContext) private var context
     @Query private var emojiLocalStorageItemsList: Array<DataItem>
@@ -96,18 +112,12 @@ struct ContentView: View {
     @State private var isHeaderEmojiVisible: Bool = false
     @State private var pressedItemTopDisplay: String = "❤️"
     
-    @State private var backgroundColor: Color = Color(UIColor(red: 1.00, green: 1.00, blue: 1.00, alpha: 0.05))
-    @State private var pressedButtonColor: Color = Color(UIColor(red: 1.00, green: 1.00, blue: 1.00, alpha: 1))
+    @State private var backgroundColor: Color = Color("emoji-bg-color")
+    @State private var pressedButtonColor: Color = Color("emoji-pressed-bg-color")
     
     @State private var dispatchWorkItemArray: Array<DispatchWorkItem> = []
     
     @State private var CurrentlyPressedTopDisplayScale: CGFloat = 0
-    
-    func addItem(emojiValue: String) {
-        let item = DataItem(emojiValue: emojiValue)
-        context.insert(item)
-        userInput = ""
-    }
     
     func getPresetAndUserEmojis() -> [String] {
         var deduplicatedItems: Array<String> = []
@@ -123,6 +133,17 @@ struct ContentView: View {
         }
 
         return emojiList + deduplicatedItems
+    }
+    
+    func addItem(to emojiValue: String) {
+        let allEmojisCurrentlyAccessibleToUser = getPresetAndUserEmojis()
+        if allEmojisCurrentlyAccessibleToUser.contains(emojiValue) {
+            showPopover = false
+            return
+        }
+        let item = DataItem(emojiValue: emojiValue)
+        context.insert(item)
+        showPopover = false
     }
 
     var body: some View {
@@ -224,16 +245,18 @@ struct ContentView: View {
                         }
                 }
             }.padding(.bottom, 50)
-            Button("Add item") {
-            isAlertPresented = true
-            }.textInputAlert(
-                isPresented: $isAlertPresented,
-                text: $userInput,
-                title: "Add your emoji",
-                message: "Add custom emoji to the list",
-                placeholder: "Emoji",
-                onTextEntered: addItem
-            )
+            Button {
+                showPopover = true
+            } label: {
+                Text("Add new emoji")
+                    .frame(maxWidth: .infinity)
+            }
+            .tint(Color(UIColor(Color("add-emoji-button-bg-color")).withAlphaComponent(0.4)))
+            .foregroundColor(Color("add-emoji-button-bg-color"))
+            .buttonStyle(.bordered)
+            .padding(.leading, 50).padding(.trailing, 50)
+            .emojiPalette(selectedEmoji: $emoji.onChange(addItem),
+                           isPresented: $showPopover)
         }
     }
 }
