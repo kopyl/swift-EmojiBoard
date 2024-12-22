@@ -224,22 +224,16 @@ struct ContentView: View {
                         }
                 }
             }.padding(.bottom, 50)
-            HStack(spacing: 50) {
-                Button("Delete all items") {
-                    try? context.delete(model: DataItem.self, where: #Predicate {!$0.emojiValue.isEmpty})
-                }.tint(.red)
-
-                Button("Add item") {
-                isAlertPresented = true
-                }.textInputAlert(
-                    isPresented: $isAlertPresented,
-                    text: $userInput,
-                    title: "Add your emoji",
-                    message: "Add custom emoji to the list",
-                    placeholder: "Emoji",
-                    onTextEntered: addItem
-                )
-            }
+            Button("Add item") {
+            isAlertPresented = true
+            }.textInputAlert(
+                isPresented: $isAlertPresented,
+                text: $userInput,
+                title: "Add your emoji",
+                message: "Add custom emoji to the list",
+                placeholder: "Emoji",
+                onTextEntered: addItem
+            )
         }
     }
 }
