@@ -234,12 +234,6 @@ struct ContentView: View {
                     placeholder: "Emoji",
                     onTextEntered: addItem
                 )
-                Button("Print items") {
-                    for item in emojiLocalStorageItemsList {
-                        print(item.emojiValue, item.timeStampCreated)
-                    }
-                    print("")
-                }
             }
         }
     }
