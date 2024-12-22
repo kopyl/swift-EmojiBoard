@@ -110,7 +110,7 @@ struct ContentView: View {
         try? context.delete(model: DataItem.self, where: #Predicate {$0.emojiValue.isEmpty})
     }
     
-    func getCombinedEmojiList() -> [String] {
+    func getPresetAndUserEmojis() -> [String] {
         var deduplicatedItems: Array<String> = []
 
         let sortedLocalStorageItems = emojiLocalStorageItemsList
@@ -134,7 +134,7 @@ struct ContentView: View {
                 .scaleEffect(CurrentlyPressedTopDisplayScale)
             Spacer()
             LazyVGrid(columns: adaptiveColumn, spacing: 5) {
-                ForEach(getCombinedEmojiList(), id: \.self) { item in
+                ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
                         .frame(width: buttonSize, height: buttonSize, alignment: .center)
                         .background(pressedItem == item ? pressedButtonColor : backgroundColor)
