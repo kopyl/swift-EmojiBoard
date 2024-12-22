@@ -18,7 +18,7 @@ struct TextInputAlert: UIViewControllerRepresentable {
     var title: String
     var message: String
     var placeholder: String
-    var onTextEntered: (String) -> Void // Callback for reacting to text input
+    var onTextEntered: (String) -> Void
     
     class Coordinator: NSObject {
         var alert: TextInputAlert
@@ -64,7 +64,6 @@ struct TextInputAlert: UIViewControllerRepresentable {
     }
 }
 
-// SwiftUI View Modifier for presenting the alert
 extension View {
     func textInputAlert(isPresented: Binding<Bool>, text: Binding<String>, title: String, message: String, placeholder: String = "", onTextEntered: @escaping (String) -> Void) -> some View {
         self.background(
@@ -78,11 +77,6 @@ extension View {
             )
         )
     }
-}
-
-struct EmojiItem: Identifiable {
-    let id: UUID
-    let emoji: String
 }
 
 @available(iOS 17.0, *)
@@ -113,16 +107,23 @@ struct ContentView: View {
         let item = DataItem(emojiValue: emojiValue)
         context.insert(item)
         userInput = ""
+        try? context.delete(model: DataItem.self, where: #Predicate {$0.emojiValue.isEmpty})
     }
     
-    func getCombinedEmojiList() -> [EmojiItem] {
+    func getCombinedEmojiList() -> [String] {
+        var deduplicatedItems: Array<String> = []
+
         let sortedLocalStorageItems = emojiLocalStorageItemsList
             .sorted(by: { $0.timeStampCreated < $1.timeStampCreated })
-            .map { EmojiItem(id: UUID(uuidString: $0.id) ?? UUID(), emoji: $0.emojiValue) }
+            .map { $0.emojiValue }
+        
+        for sortedLocalStorageItem in sortedLocalStorageItems {
+            if !deduplicatedItems.contains(sortedLocalStorageItem) {
+                deduplicatedItems.append(sortedLocalStorageItem)
+            }
+        }
 
-        let predefinedEmojiList = emojiList.map { EmojiItem(id: UUID(), emoji: $0) }
-
-        return predefinedEmojiList + sortedLocalStorageItems
+        return emojiList + deduplicatedItems
     }
 
     var body: some View {
@@ -133,18 +134,18 @@ struct ContentView: View {
                 .scaleEffect(CurrentlyPressedTopDisplayScale)
             Spacer()
             LazyVGrid(columns: adaptiveColumn, spacing: 5) {
-                ForEach(getCombinedEmojiList()) { item in
-                    Text(String(item.emoji))
+                ForEach(getCombinedEmojiList(), id: \.self) { item in
+                    Text(String(item))
                         .frame(width: buttonSize, height: buttonSize, alignment: .center)
-                        .background(pressedItem == item.emoji ? pressedButtonColor : backgroundColor)
+                        .background(pressedItem == item ? pressedButtonColor : backgroundColor)
                         .cornerRadius(4)
                         .foregroundColor(.white)
-                        .scaleEffect(pressedItem == item.emoji ? 1.5 : 1)
+                        .scaleEffect(pressedItem == item ? 1.5 : 1)
                         .onTapGesture {
-                            UIPasteboard.general.string = item.emoji
+                            UIPasteboard.general.string = item
                             vibrate()
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                pressedItem = item.emoji
+                                pressedItem = item
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -162,19 +163,16 @@ struct ContentView: View {
                             
                             if isHeaderEmojiVisible == true {
                                 isHeaderEmojiVisible = false
-                                print("Making invisible top 1", Date.now.timeIntervalSince1970)
                                 
                                 withAnimation(.easeInOut(duration: animationDuration)) {
                                     CurrentlyPressedTopDisplayScale = 0
-                                    print("Downscaling top 1", Date.now.timeIntervalSince1970)
                                 }
                                 
                                 newWorkItem = DispatchWorkItem {
-                                    pressedItemTopDisplay = item.emoji
+                                    pressedItemTopDisplay = item
                                     isHeaderEmojiVisible = true
                                     withAnimation(.easeInOut(duration: animationDuration)) {
                                         CurrentlyPressedTopDisplayScale = 1
-                                        print("Upscaling top 1", Date.now.timeIntervalSince1970)
                                     }
                                 }
                                 dispatchWorkItemArray.append(newWorkItem)
@@ -184,7 +182,6 @@ struct ContentView: View {
                                 newWorkItem = DispatchWorkItem {
                                     withAnimation(.easeInOut(duration: animationDuration)) {
                                         CurrentlyPressedTopDisplayScale = 0
-                                        print("Downscaling top 2", Date.now.timeIntervalSince1970)
                                     }
                                 }
                                 dispatchWorkItemArray.append(newWorkItem)
@@ -193,7 +190,6 @@ struct ContentView: View {
                                 
                                 newWorkItem = DispatchWorkItem {
                                     isHeaderEmojiVisible = false
-                                    print("Making invisible top 2", Date.now.timeIntervalSince1970)
                                 }
                                 dispatchWorkItemArray.append(newWorkItem)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.1, execute: newWorkItem)
@@ -201,16 +197,14 @@ struct ContentView: View {
 
 
                             } else {
-                                pressedItemTopDisplay = item.emoji
+                                pressedItemTopDisplay = item
                                 isHeaderEmojiVisible = true
                                 withAnimation(.easeInOut(duration: animationDuration)) {
                                     CurrentlyPressedTopDisplayScale = 1
-                                    print("Upscaling bottom", Date.now.timeIntervalSince1970)
                                 }
                                 newWorkItem = DispatchWorkItem {
                                     withAnimation(.easeInOut(duration: animationDuration)) {
                                         CurrentlyPressedTopDisplayScale = 0
-                                        print("Downscaling bottom", Date.now.timeIntervalSince1970)
                                     }
                                 }
                                 dispatchWorkItemArray.append(newWorkItem)
@@ -218,7 +212,6 @@ struct ContentView: View {
                                 
                                 newWorkItem = DispatchWorkItem {
                                     isHeaderEmojiVisible = false
-                                    print("Making invisible bottom", Date.now.timeIntervalSince1970)
                                 }
                                 dispatchWorkItemArray.append(newWorkItem)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
@@ -241,12 +234,12 @@ struct ContentView: View {
                     placeholder: "Emoji",
                     onTextEntered: addItem
                 )
-//                Button("Print items") {
-//                    for item in emojiLocalStorageItemsList {
-//                        print(item.emojiValue, item.timeStampCreated)
-//                    }
-//                    print("")
-//                }
+                Button("Print items") {
+                    for item in emojiLocalStorageItemsList {
+                        print(item.emojiValue, item.timeStampCreated)
+                    }
+                    print("")
+                }
             }
         }
     }
