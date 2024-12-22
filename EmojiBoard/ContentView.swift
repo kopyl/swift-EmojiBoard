@@ -80,6 +80,11 @@ extension View {
     }
 }
 
+struct EmojiItem: Identifiable {
+    let id: UUID
+    let emoji: String
+}
+
 @available(iOS 17.0, *)
 struct ContentView: View {
     
@@ -108,10 +113,16 @@ struct ContentView: View {
         let item = DataItem(emojiValue: emojiValue)
         context.insert(item)
         userInput = ""
-        try? context.delete(model: DataItem.self, where: #Predicate {$0.emojiValue.isEmpty})
-//        for item in emojiLocalStorageItemsList {
-//            print(item.emojiValue)
-//        }
+    }
+    
+    func getCombinedEmojiList() -> [EmojiItem] {
+        let sortedLocalStorageItems = emojiLocalStorageItemsList
+            .sorted(by: { $0.timeStampCreated < $1.timeStampCreated })
+            .map { EmojiItem(id: UUID(uuidString: $0.id) ?? UUID(), emoji: $0.emojiValue) }
+
+        let predefinedEmojiList = emojiList.map { EmojiItem(id: UUID(), emoji: $0) }
+
+        return predefinedEmojiList + sortedLocalStorageItems
     }
 
     var body: some View {
@@ -122,18 +133,18 @@ struct ContentView: View {
                 .scaleEffect(CurrentlyPressedTopDisplayScale)
             Spacer()
             LazyVGrid(columns: adaptiveColumn, spacing: 5) {
-                ForEach(emojiList + emojiLocalStorageItemsList.sorted(by: {$0.timeStampCreated < $1.timeStampCreated}).map({(item: DataItem) -> String in return item.emojiValue}), id: \.self) { item in
-                    Text(String(item))
+                ForEach(getCombinedEmojiList()) { item in
+                    Text(String(item.emoji))
                         .frame(width: buttonSize, height: buttonSize, alignment: .center)
-                        .background(pressedItem == item ? pressedButtonColor : backgroundColor)
+                        .background(pressedItem == item.emoji ? pressedButtonColor : backgroundColor)
                         .cornerRadius(4)
                         .foregroundColor(.white)
-                        .scaleEffect(pressedItem == item ? 1.5 : 1)
+                        .scaleEffect(pressedItem == item.emoji ? 1.5 : 1)
                         .onTapGesture {
-                            UIPasteboard.general.string = item
+                            UIPasteboard.general.string = item.emoji
                             vibrate()
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                pressedItem = item
+                                pressedItem = item.emoji
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -159,7 +170,7 @@ struct ContentView: View {
                                 }
                                 
                                 newWorkItem = DispatchWorkItem {
-                                    pressedItemTopDisplay = item
+                                    pressedItemTopDisplay = item.emoji
                                     isHeaderEmojiVisible = true
                                     withAnimation(.easeInOut(duration: animationDuration)) {
                                         CurrentlyPressedTopDisplayScale = 1
@@ -190,7 +201,7 @@ struct ContentView: View {
 
 
                             } else {
-                                pressedItemTopDisplay = item
+                                pressedItemTopDisplay = item.emoji
                                 isHeaderEmojiVisible = true
                                 withAnimation(.easeInOut(duration: animationDuration)) {
                                     CurrentlyPressedTopDisplayScale = 1
@@ -230,12 +241,12 @@ struct ContentView: View {
                     placeholder: "Emoji",
                     onTextEntered: addItem
                 )
-                Button("Print items") {
-                    for item in emojiLocalStorageItemsList {
-                        print(item.emojiValue, item.timeStampCreated)
-                    }
-                    print("")
-                }
+//                Button("Print items") {
+//                    for item in emojiLocalStorageItemsList {
+//                        print(item.emojiValue, item.timeStampCreated)
+//                    }
+//                    print("")
+//                }
             }
         }
     }
