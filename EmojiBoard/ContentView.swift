@@ -37,7 +37,7 @@ struct TextInputAlert: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> UIViewController {
-        return UIViewController() // Dummy controller
+        return UIViewController()
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
@@ -53,7 +53,7 @@ struct TextInputAlert: UIViewControllerRepresentable {
         
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
             self.isPresented = false
-            self.onTextEntered(self.text) // React when the user finishes input
+            self.onTextEntered(self.text)
         })
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
