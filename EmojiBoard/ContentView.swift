@@ -107,7 +107,6 @@ struct ContentView: View {
         let item = DataItem(emojiValue: emojiValue)
         context.insert(item)
         userInput = ""
-        try? context.delete(model: DataItem.self, where: #Predicate {$0.emojiValue.isEmpty})
     }
     
     func getPresetAndUserEmojis() -> [String] {
@@ -141,6 +140,12 @@ struct ContentView: View {
                         .cornerRadius(4)
                         .foregroundColor(.white)
                         .scaleEffect(pressedItem == item ? 1.5 : 1)
+                        .onLongPressGesture {
+                            let dataItemIndexToRemove = emojiLocalStorageItemsList.firstIndex(where: {$0.emojiValue == item})
+                            if dataItemIndexToRemove != nil {
+                                context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
+                            }
+                        }
                         .onTapGesture {
                             UIPasteboard.general.string = item
                             vibrate()
