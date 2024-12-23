@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import EmojiPalette
 
-let spacing: CGFloat = 5
+let spacing: CGFloat = 0
 let buttonSize: CGFloat = 50
 let emojiList = ["👍️️️️️️", "❤️", "😍", "🔥", "✅", "❌", "🤔", "🤡", "😄", "🤮", "🙏", "🚫", "😂", "😭", "🤬", "😀", "🍌", "🥰", "🚩", "👇", "☝️"]
 let animationDuration = 0.1
@@ -38,16 +38,15 @@ struct ContentView: View {
     @Query private var emojiLocalStorageItemsList: Array<DataItem>
 
     private let adaptiveColumn = [
-        GridItem(.adaptive(minimum: buttonSize-spacing), spacing: spacing)
+        GridItem(.adaptive(minimum: buttonSize), spacing: spacing)
     ]
 
     @State private var pressedItem: String? = nil
     @State private var isHeaderEmojiVisible: Bool = false
     @State private var pressedItemTopDisplay: String = "❤️"
-    
-    @State private var backgroundColor: Color = Color("emoji-bg-color")
+
     @State private var pressedButtonColor: Color = Color("emoji-pressed-bg-color")
-    
+
     @State private var dispatchWorkItemArray: Array<DispatchWorkItem> = []
     
     @State private var CurrentlyPressedTopDisplayScale: CGFloat = 0
@@ -86,11 +85,11 @@ struct ContentView: View {
                 .padding(.top, 50)
                 .scaleEffect(CurrentlyPressedTopDisplayScale)
             Spacer()
-            LazyVGrid(columns: adaptiveColumn, spacing: 5) {
+            LazyVGrid(columns: adaptiveColumn, spacing: 0) {
                 ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
-                        .frame(width: buttonSize, height: buttonSize)
-                        .background(pressedItem == item ? pressedButtonColor : backgroundColor)
+                        .frame(maxWidth: .infinity, minHeight: buttonSize)
+                        .background(pressedItem == item ? pressedButtonColor : .clear)
                         .cornerRadius(4)
                         .foregroundColor(.white)
                         .scaleEffect(pressedItem == item ? 1.5 : 1)
