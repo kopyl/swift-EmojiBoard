@@ -183,8 +183,8 @@ struct ContentView: View {
                 Text("Add new emoji")
                     .frame(maxWidth: .infinity)
             }
-            .tint(Color(UIColor(Color("add-emoji-button-bg-color")).withAlphaComponent(0.4)))
-            .foregroundColor(Color("add-emoji-button-bg-color"))
+            .tint(.clear)
+            .foregroundColor(Color("add-emoji-button-text-color"))
             .buttonStyle(.bordered)
             .padding(.leading, 50).padding(.trailing, 50)
             .emojiPalette(selectedEmoji: $emoji.onChange(addItem),
