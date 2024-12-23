@@ -89,7 +89,7 @@ struct ContentView: View {
             LazyVGrid(columns: adaptiveColumn, spacing: 5) {
                 ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
-                        .frame(width: buttonSize, height: buttonSize, alignment: .center)
+                        .frame(width: buttonSize, height: buttonSize)
                         .background(pressedItem == item ? pressedButtonColor : backgroundColor)
                         .cornerRadius(4)
                         .foregroundColor(.white)
