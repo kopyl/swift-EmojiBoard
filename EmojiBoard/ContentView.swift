@@ -184,7 +184,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
             }
             .tint(.clear)
-            .foregroundColor(Color("add-emoji-button-text-color"))
+            .foregroundColor(.gray)
             .buttonStyle(.bordered)
             .padding(.leading, 50).padding(.trailing, 50)
             .emojiPalette(selectedEmoji: $emoji.onChange(addItem),
