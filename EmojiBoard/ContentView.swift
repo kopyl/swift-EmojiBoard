@@ -196,6 +196,6 @@ struct ContentView: View {
 @available(iOS 17.0, *)
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-    }
+            ForEach(ColorScheme.allCases, id: \.self, content: ContentView().preferredColorScheme)
+        }
 }
