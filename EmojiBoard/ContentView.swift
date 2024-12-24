@@ -127,6 +127,7 @@ struct ContentView: View {
             LazyVGrid(columns: adaptiveColumn, spacing: 0) {
                 ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
+                        .font(.system(size: 30))
                         .frame(maxWidth: .infinity, minHeight: buttonSize)
                         .background(getBackgroundColor(item))
                         .cornerRadius(4)
