@@ -8,6 +8,8 @@ struct AnimationProperties {
 struct ShakingModifier: ViewModifier {
     @Binding var isRemoving: Bool
     @State private var angle: Angle = .zero
+    
+    var canBeRemoved: Bool
 
     let totalDuration = 0.7
 
@@ -15,7 +17,7 @@ struct ShakingModifier: ViewModifier {
         content
             .keyframeAnimator(
                 initialValue: AnimationProperties(),
-                repeating: isRemoving
+                repeating: isRemoving && canBeRemoved
             ) {
                 content, value in
                 content
@@ -35,7 +37,7 @@ struct ShakingModifier: ViewModifier {
 }
 
 extension View {
-    func shaking(_ isRemoving: Binding<Bool>) -> some View {
-        self.modifier(ShakingModifier(isRemoving: isRemoving))
+    func shaking(_ isRemoving: Binding<Bool>, _ canBeRemoved: Bool) -> some View {
+        self.modifier(ShakingModifier(isRemoving: isRemoving, canBeRemoved: canBeRemoved))
     }
 }

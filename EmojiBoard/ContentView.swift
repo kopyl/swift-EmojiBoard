@@ -79,7 +79,27 @@ struct ContentView: View {
         context.insert(item)
         showPopover = false
     }
-
+    
+    func isItemDeleteable(_ item: String) -> Bool {
+        let adedEmojis = emojiLocalStorageItemsList.map{ $0.emojiValue }
+        if adedEmojis.contains(item) {
+            return true
+        }
+        return false
+    }
+    
+    func getBackgroundColor(_ item: String) -> Color {
+        if isInRemovingState {
+            if isItemDeleteable(item) {
+                return .red
+            }
+        }
+        if pressedItem == item {
+            return pressedButtonColor
+        }
+        return .clear
+    }
+    
     var body: some View {
         VStack {
             Text(String(String(pressedItemTopDisplay)))
@@ -90,12 +110,12 @@ struct ContentView: View {
             LazyVGrid(columns: adaptiveColumn, spacing: 0) {
                 ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
-                        .shaking($isInRemovingState)
                         .frame(maxWidth: .infinity, minHeight: buttonSize)
-                        .background(pressedItem == item ? pressedButtonColor : .clear)
+                        .background(getBackgroundColor(item))
                         .cornerRadius(4)
                         .foregroundColor(.white)
                         .scaleEffect(pressedItem == item ? 1.5 : 1)
+                        .shaking($isInRemovingState, isItemDeleteable(item))
                         .onTapGesture {
                             if !isInRemovingState
                             {
