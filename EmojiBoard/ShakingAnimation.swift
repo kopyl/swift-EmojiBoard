@@ -7,10 +7,9 @@ struct AnimationProperties {
 
 struct ShakingModifier: ViewModifier {
     @Binding var isRemoving: Bool
-    @State private var angle: Angle = .zero
-    
     var canBeRemoved: Bool
-
+    
+    let angle: Angle = .zero
     let totalDuration = 0.7
 
     func body(content: Content) -> some View {
