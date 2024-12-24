@@ -36,9 +36,7 @@ struct ButtonDelete: View {
             Text(!isInRemovingState ? "Remove emoji" : "Done")
                 .frame(maxWidth: .infinity)
         }
-        .tint(.clear)
         .foregroundColor(.red)
-        .buttonStyle(.bordered)
     }
 }
 
