@@ -216,7 +216,7 @@ struct ContentView: View {
                                 if dataItemIndexToRemove != nil {
                                     context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
                                 }
-                                if emojiLocalStorageItemsList.count == 1 {
+                                if emojiLocalStorageItemsList.count == 1 && dataItemIndexToRemove != nil {
                                     isInRemovingState = false
                                 }
                             }
