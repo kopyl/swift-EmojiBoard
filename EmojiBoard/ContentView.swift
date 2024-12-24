@@ -26,6 +26,22 @@ extension Binding {
     }
 }
 
+struct ButtonDelete: View {
+    @Binding var isInRemovingState: Bool
+    
+    var body: some View {
+        Button {
+            isInRemovingState.toggle()
+        } label: {
+            Text(!isInRemovingState ? "Remove emoji" : "Done")
+                .frame(maxWidth: .infinity)
+        }
+        .tint(.clear)
+        .foregroundColor(.red)
+        .buttonStyle(.bordered)
+    }
+}
+
 @available(iOS 17.0, *)
 struct ContentView: View {
     
@@ -108,15 +124,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             if thereAreItemsLeftToBeDeleted() == true {
-                Button {
-                    isInRemovingState.toggle()
-                } label: {
-                    Text(!isInRemovingState ? "Remove emoji" : "Done")
-                        .frame(maxWidth: .infinity)
-                }
-                .tint(.clear)
-                .foregroundColor(.red)
-                .buttonStyle(.bordered)
+                ButtonDelete(isInRemovingState: $isInRemovingState)
             }
             
             Text(String(String(pressedItemTopDisplay)))
