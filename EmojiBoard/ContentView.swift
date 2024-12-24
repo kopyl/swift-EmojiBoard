@@ -221,6 +221,9 @@ struct ContentView: View {
                                 }
                             }
                         }
+                        .onLongPressGesture {
+                            isInRemovingState.toggle()
+                        }
                 }
             }.padding(.bottom, 50)
             Button {
