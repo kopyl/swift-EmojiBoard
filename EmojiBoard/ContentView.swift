@@ -91,7 +91,7 @@ struct ContentView: View {
     func getBackgroundColor(_ item: String) -> Color {
         if isInRemovingState {
             if isItemDeleteable(item) {
-                return .red
+                return Color(UIColor(.red).withAlphaComponent(0.1))
             }
         }
         if pressedItem == item {
