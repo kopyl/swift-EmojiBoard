@@ -43,6 +43,7 @@
 		481D8B102D15A82700EAF053 = {
 			isa = PBXGroup;
 			children = (
+				48E94BAD2D1AD40D007BD9E1 /* README.md */,
 				481D8B1B2D15A82700EAF053 /* EmojiBoard */,
 				481D8B1A2D15A82700EAF053 /* Products */,
 			);
@@ -61,7 +62,6 @@
 			children = (
 				481D8B1C2D15A82700EAF053 /* EmojiBoardApp.swift */,
 				481D8B1E2D15A82700EAF053 /* ContentView.swift */,
-				48E94BAD2D1AD40D007BD9E1 /* README.md */,
 				48EC3DB62D1A2A6000136993 /* ShakingAnimation.swift */,
 				4893E07D2D17E67500611F7B /* Storage.swift */,
 				481D8B202D15A82A00EAF053 /* Assets.xcassets */,
