@@ -194,7 +194,6 @@ struct ContentView: View {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
                                 }
                             } else {
-                                print(item)
                                 let dataItemIndexToRemove = emojiLocalStorageItemsList.firstIndex(where: {$0.emojiValue == item})
                                 if dataItemIndexToRemove != nil {
                                     context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
