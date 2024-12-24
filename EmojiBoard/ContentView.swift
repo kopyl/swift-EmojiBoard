@@ -29,6 +29,8 @@ extension Binding {
 @available(iOS 17.0, *)
 struct ContentView: View {
     
+    @State private var isInRemovingState = false
+    
     @State var showPopover: Bool = false
     @State var emoji: String = ""
     
@@ -88,91 +90,95 @@ struct ContentView: View {
             LazyVGrid(columns: adaptiveColumn, spacing: 0) {
                 ForEach(getPresetAndUserEmojis(), id: \.self) { item in
                     Text(String(item))
+                        .shaking($isInRemovingState)
                         .frame(maxWidth: .infinity, minHeight: buttonSize)
                         .background(pressedItem == item ? pressedButtonColor : .clear)
                         .cornerRadius(4)
                         .foregroundColor(.white)
                         .scaleEffect(pressedItem == item ? 1.5 : 1)
                         .onTapGesture {
-                            UIPasteboard.general.string = item
-                            vibrate()
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                pressedItem = item
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            if !isInRemovingState
+                            {
+                                UIPasteboard.general.string = item
+                                vibrate()
                                 withAnimation(.easeInOut(duration: 0.2)) {
-                                    pressedItem = nil
+                                    pressedItem = item
                                 }
-                            }
-                            
-                            
-                            for dispatchWorkItem in dispatchWorkItemArray {
-                                dispatchWorkItem.cancel()
-                            }
-                            
-                            
-                            var newWorkItem: DispatchWorkItem
-                            
-                            if isHeaderEmojiVisible == true {
-                                isHeaderEmojiVisible = false
-                                
-                                withAnimation(.easeInOut(duration: animationDuration)) {
-                                    CurrentlyPressedTopDisplayScale = 0
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        pressedItem = nil
+                                    }
                                 }
                                 
-                                newWorkItem = DispatchWorkItem {
+                                
+                                for dispatchWorkItem in dispatchWorkItemArray {
+                                    dispatchWorkItem.cancel()
+                                }
+                                
+                                
+                                var newWorkItem: DispatchWorkItem
+                                
+                                if isHeaderEmojiVisible == true {
+                                    isHeaderEmojiVisible = false
+                                    
+                                    withAnimation(.easeInOut(duration: animationDuration)) {
+                                        CurrentlyPressedTopDisplayScale = 0
+                                    }
+                                    
+                                    newWorkItem = DispatchWorkItem {
+                                        pressedItemTopDisplay = item
+                                        isHeaderEmojiVisible = true
+                                        withAnimation(.easeInOut(duration: animationDuration)) {
+                                            CurrentlyPressedTopDisplayScale = 1
+                                        }
+                                    }
+                                    dispatchWorkItemArray.append(newWorkItem)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration, execute: newWorkItem)
+                                    
+                                    
+                                    newWorkItem = DispatchWorkItem {
+                                        withAnimation(.easeInOut(duration: animationDuration)) {
+                                            CurrentlyPressedTopDisplayScale = 0
+                                        }
+                                    }
+                                    dispatchWorkItemArray.append(newWorkItem)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
+                                    
+                                    
+                                    newWorkItem = DispatchWorkItem {
+                                        isHeaderEmojiVisible = false
+                                    }
+                                    dispatchWorkItemArray.append(newWorkItem)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.1, execute: newWorkItem)
+                                    
+                                    
+                                    
+                                } else {
                                     pressedItemTopDisplay = item
                                     isHeaderEmojiVisible = true
                                     withAnimation(.easeInOut(duration: animationDuration)) {
                                         CurrentlyPressedTopDisplayScale = 1
                                     }
-                                }
-                                dispatchWorkItemArray.append(newWorkItem)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration, execute: newWorkItem)
-                                
-                                
-                                newWorkItem = DispatchWorkItem {
-                                    withAnimation(.easeInOut(duration: animationDuration)) {
-                                        CurrentlyPressedTopDisplayScale = 0
+                                    newWorkItem = DispatchWorkItem {
+                                        withAnimation(.easeInOut(duration: animationDuration)) {
+                                            CurrentlyPressedTopDisplayScale = 0
+                                        }
                                     }
+                                    dispatchWorkItemArray.append(newWorkItem)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
+                                    
+                                    newWorkItem = DispatchWorkItem {
+                                        isHeaderEmojiVisible = false
+                                    }
+                                    dispatchWorkItemArray.append(newWorkItem)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
                                 }
-                                dispatchWorkItemArray.append(newWorkItem)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
-                                
-                                
-                                newWorkItem = DispatchWorkItem {
-                                    isHeaderEmojiVisible = false
-                                }
-                                dispatchWorkItemArray.append(newWorkItem)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.1, execute: newWorkItem)
-
-
-
                             } else {
-                                pressedItemTopDisplay = item
-                                isHeaderEmojiVisible = true
-                                withAnimation(.easeInOut(duration: animationDuration)) {
-                                    CurrentlyPressedTopDisplayScale = 1
+                                print(item)
+                                let dataItemIndexToRemove = emojiLocalStorageItemsList.firstIndex(where: {$0.emojiValue == item})
+                                if dataItemIndexToRemove != nil {
+                                    context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
                                 }
-                                newWorkItem = DispatchWorkItem {
-                                    withAnimation(.easeInOut(duration: animationDuration)) {
-                                        CurrentlyPressedTopDisplayScale = 0
-                                    }
-                                }
-                                dispatchWorkItemArray.append(newWorkItem)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
-                                
-                                newWorkItem = DispatchWorkItem {
-                                    isHeaderEmojiVisible = false
-                                }
-                                dispatchWorkItemArray.append(newWorkItem)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: newWorkItem)
-                            }
-                        }
-                        .onLongPressGesture {
-                            let dataItemIndexToRemove = emojiLocalStorageItemsList.firstIndex(where: {$0.emojiValue == item})
-                            if dataItemIndexToRemove != nil {
-                                context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
                             }
                         }
                 }
@@ -189,6 +195,16 @@ struct ContentView: View {
             .padding(.leading, 50).padding(.trailing, 50)
             .emojiPalette(selectedEmoji: $emoji.onChange(addItem),
                            isPresented: $showPopover)
+            Button {
+                isInRemovingState.toggle()
+            } label: {
+                Text(!isInRemovingState ? "Remove emoji" : "Done")
+                    .frame(maxWidth: .infinity)
+            }
+            .tint(.clear)
+            .foregroundColor(.red)
+            .buttonStyle(.bordered)
+            .padding(.leading, 50).padding(.trailing, 50)
         }
     }
 }

@@ -13,6 +13,7 @@
 		481D8B212D15A82A00EAF053 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 481D8B202D15A82A00EAF053 /* Assets.xcassets */; };
 		481D8B242D15A82A00EAF053 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 481D8B232D15A82A00EAF053 /* Preview Assets.xcassets */; };
 		4893E07E2D17E67500611F7B /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4893E07D2D17E67500611F7B /* Storage.swift */; };
+		48EC3DB72D1A2A6000136993 /* ShakingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EC3DB62D1A2A6000136993 /* ShakingAnimation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		481D8B202D15A82A00EAF053 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		481D8B232D15A82A00EAF053 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4893E07D2D17E67500611F7B /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		48EC3DB62D1A2A6000136993 /* ShakingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakingAnimation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 			children = (
 				481D8B1C2D15A82700EAF053 /* EmojiBoardApp.swift */,
 				481D8B1E2D15A82700EAF053 /* ContentView.swift */,
+				48EC3DB62D1A2A6000136993 /* ShakingAnimation.swift */,
 				4893E07D2D17E67500611F7B /* Storage.swift */,
 				481D8B202D15A82A00EAF053 /* Assets.xcassets */,
 				481D8B222D15A82A00EAF053 /* Preview Content */,
@@ -150,6 +153,7 @@
 			files = (
 				481D8B1F2D15A82700EAF053 /* ContentView.swift in Sources */,
 				481D8B1D2D15A82700EAF053 /* EmojiBoardApp.swift in Sources */,
+				48EC3DB72D1A2A6000136993 /* ShakingAnimation.swift in Sources */,
 				4893E07E2D17E67500611F7B /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
