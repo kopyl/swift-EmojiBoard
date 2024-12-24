@@ -88,6 +88,10 @@ struct ContentView: View {
         return false
     }
     
+    func thereAreItemsLeftToBeDeleted() -> Bool {
+        return getPresetAndUserEmojis() != emojiList
+    }
+    
     func getBackgroundColor(_ item: String) -> Color {
         if isInRemovingState {
             if isItemDeleteable(item) {
@@ -100,8 +104,21 @@ struct ContentView: View {
         return .clear
     }
     
+    @ViewBuilder
     var body: some View {
         VStack {
+            if thereAreItemsLeftToBeDeleted() == true {
+                Button {
+                    isInRemovingState.toggle()
+                } label: {
+                    Text(!isInRemovingState ? "Remove emoji" : "Done")
+                        .frame(maxWidth: .infinity)
+                }
+                .tint(.clear)
+                .foregroundColor(.red)
+                .buttonStyle(.bordered)
+            }
+            
             Text(String(String(pressedItemTopDisplay)))
                 .font(.system(size: 150))
                 .padding(.top, 50)
@@ -198,6 +215,9 @@ struct ContentView: View {
                                 if dataItemIndexToRemove != nil {
                                     context.delete(emojiLocalStorageItemsList[dataItemIndexToRemove!])
                                 }
+                                if emojiLocalStorageItemsList.count == 1 {
+                                    isInRemovingState = false
+                                }
                             }
                         }
                 }
@@ -214,16 +234,6 @@ struct ContentView: View {
             .padding(.leading, 50).padding(.trailing, 50)
             .emojiPalette(selectedEmoji: $emoji.onChange(addItem),
                            isPresented: $showPopover)
-            Button {
-                isInRemovingState.toggle()
-            } label: {
-                Text(!isInRemovingState ? "Remove emoji" : "Done")
-                    .frame(maxWidth: .infinity)
-            }
-            .tint(.clear)
-            .foregroundColor(.red)
-            .buttonStyle(.bordered)
-            .padding(.leading, 50).padding(.trailing, 50)
         }
     }
 }
