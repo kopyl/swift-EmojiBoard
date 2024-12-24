@@ -10,7 +10,6 @@ struct ShakingModifier: ViewModifier {
     var canBeRemoved: Bool
     
     let angle: Angle = .zero
-    let totalDuration = 0.05
 
     func body(content: Content) -> some View {
         content
@@ -23,11 +22,11 @@ struct ShakingModifier: ViewModifier {
                     .rotationEffect(Angle(degrees: isRemoving ? value.rotationAngle : 0))
             } keyframes: {_ in
                 KeyframeTrack(\.rotationAngle) {
-                    SpringKeyframe(0, duration: totalDuration * 0.25)
-                    SpringKeyframe(-80, duration: totalDuration * 0.50)
-                    SpringKeyframe(0, duration: totalDuration * 0.75)
-                    SpringKeyframe(80, duration: totalDuration * 1)
-                    SpringKeyframe(0, duration: totalDuration * 1)
+                    CubicKeyframe(10, duration: 0.1)
+                    CubicKeyframe(-10, duration: 0.1)
+                    CubicKeyframe(5, duration: 0.1)
+                    CubicKeyframe(-5, duration: 0.1)
+                    CubicKeyframe(0, duration: 0.1)
                 }
                 
             }
