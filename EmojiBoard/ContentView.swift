@@ -228,7 +228,10 @@ struct ContentView: View {
                             }
                         }
                         .onLongPressGesture {
-                            isInRemovingState.toggle()
+                            if emojiLocalStorageItemsList.count > 0 {
+                                isInRemovingState.toggle()
+                            }
+                            print(mtkView.preferredFramesPerSecond)
                         }
                 }
             }.padding(.bottom, 50)
